@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Random grouper</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body class="vh-100 vw-100 d-flex flex-column justify-content-center align-items-center gap-4">
+  <div class="container-md d-flex flex-column gap-4">
+    <h1 class="text-center">
+      Name grouper
+    </h1>
+    <form id="form" class="d-flex flex-column gap-2">
+      <!-- Text Area -->
+      <div class="form-group">
+        <label for="textArea">Names (comma separated)</label>
+        <textarea class="form-control" id="textArea" rows="4" placeholder="e.g. 张三, 李四, 王五, 赵六"></textarea>
+      </div>
+
+      <!-- Integer Input -->
+      <div class="form-group">
+        <label for="integerInput">Integer Input:</label>
+        <input type="number" class="form-control" id="integerInput">
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Group names</button>
+    </form>
+
+    <!-- Result Text Area -->
+    <div class="d-flex flex-column gap-2">
+      <label for="resultTextArea">Result:</label>
+      <textarea class="form-control" id="resultTextArea" rows="10" readonly></textarea>
+      <!-- Copy Button -->
+      <button id="copybutton" type="button" class="btn btn-secondary">Copy groups as text</button>
+    </div>
+
+    <script>
+      function groupNames(names, noOfGroups) {
+        // Shuffle the names randomly
+        names.sort(() => 0.5 - Math.random());
+
+        // Calculate the size of each group
+        let groupSize = Math.floor(names.length / noOfGroups);
+
+        let remainders = names.length % noOfGroups;
+
+        // Split the names into equal-sized groups
+        let groups = [[] * noOfGroups];
+        for (let i = 0; i < noOfGroups; i++) {
+          groups[i] = names.slice(i * groupSize, (i + 1) * groupSize);
+        }
+
+        // Add one remaining name to each group until none left 
+        for (let k = 0; k < remainders; k++) {
+          groups[k].push(names[names.length - 1 - k]);
+        }
+
+        return groups;
+      }
+
+      function buildStringOfGroups(arr) {
+        let result = '';
+
+        for (let i = 0; i < arr.length; i++) {
+          result += `Group ${i + 1} (${arr[i].length} members): `;
+          for (let j = 0; j < arr[i].length; j++) {
+            result += `${arr[i][j]}`;
+            if (j !== arr[i].length - 1) {
+              result += `, `;
+            }
+          }
+          result += `\n`;
+        }
+
+        return result;
+      }
+
+      const resultElement = document.getElementById('resultTextArea');
+
+      document.getElementById('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        // Get values from the input fields
+        const textValue = document.getElementById('textArea').value;
+        const integerValue = document.getElementById('integerInput').value;
+
+        const namesArray = textValue.split(/[\s,\，\、]+/).map(item => item.trim());
+
+        const groups = groupNames(namesArray, integerValue)
+
+        const result = buildStringOfGroups(groups)
+
+        // Display the result in the result text area
+        resultElement.value = result;
+      });
+
+      async function copyValueToClipboard(element) {
+        try {
+          await navigator.clipboard.writeText(element.value);
+          console.log('Copied!');
+        } catch (err) {
+          console.error(`Failed to copy: `, err);
+        }
+      }
+    
+      document.getElementById("copybutton").addEventListener("click", () => {copyValueToClipboard(resultElement)});
+    </script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
