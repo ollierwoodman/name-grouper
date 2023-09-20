@@ -17,8 +17,8 @@
     <form id="form" class="d-flex flex-column gap-2">
       <!-- Text Area -->
       <div class="form-group">
-        <label for="textArea">Names (comma separated)</label>
-        <textarea class="form-control" id="textArea" rows="4" placeholder="e.g. 张三, 李四, 王五, 赵六"></textarea>
+        <label for="textArea">Names (newline separated)</label>
+        <textarea class="form-control" id="textArea" rows="4" placeholder="张三&#10;李四&#10;王五&#10;赵六"></textarea>
       </div>
 
       <!-- Integer Input -->
@@ -88,7 +88,7 @@
         const textValue = document.getElementById('textArea').value;
         const integerValue = document.getElementById('integerInput').value;
 
-        const namesArray = textValue.split(/[\s,\，\、]+/).map(item => item.trim());
+        const namesArray = textValue.split(/\n/).map(item => item.trim());
 
         const groups = groupNames(namesArray, integerValue)
 
